@@ -10,8 +10,13 @@ auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 twitter = tweepy.API(auth)
 
+# file in which tweets will be read from
 filename = "tweets.txt"
 
+# time interval between tweets
+time_interval = 900
+
+# posts tweets on twitter account
 try:
 	with open(filename, 'r') as tweetfile:
 			f = tweetfile.readlines()
@@ -25,7 +30,7 @@ try:
 			print("Tweeting...")
 			twitter.update_status(status=line)
 			print("successful!")
-			time.sleep(30)
+			time.sleep(time_interval)
 		else:
 			print("Skipped line - length violation. Has to be within 1-140 chars long")
 			continue
@@ -34,13 +39,14 @@ try:
 except tweepy.TweepError as e:
 	print(e)
 
-
+# prints the current trends on twitter
 def getTrends():
 	trends = twitter.trends_place(1)[0]['trends']
 	names = [trend['name'] for trend in trends]
 	for name in names:
 		print(name)
 
+# returns 10 tweets related to the given keyword
 def searchTweets(keyword):
 	search = twitter.search(q=keyword, count=10)
 	for result in search:
